@@ -53,7 +53,10 @@ export const login = catchAsyncErrors(async (req, res, next) => {
   // Verify role
   if (user.role !== role) {
     return next(
-      new ErrorHandler(`User with provided email and role ${role} not found!`, 404)
+      new ErrorHandler(
+        `User with provided email and role ${role} not found!`,
+        404
+      )
     );
   }
 
@@ -64,10 +67,12 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 // Logout User
 export const logout = catchAsyncErrors(async (req, res, next) => {
   res
-    .status(200)
+    .status(201)
     .cookie("token", "", {
       httpOnly: true,
       expires: new Date(Date.now()),
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     })
     .json({
       success: true,
